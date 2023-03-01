@@ -13,7 +13,13 @@ const PageLayout = () => {
     const queryClient = new QueryClient();
     const { darkMode } = useContext(DarkModeContext);
     const { currentUser } = useContext(AuthContext);
+    window.addEventListener('onbeforeunload',() => {
+        localStorage.clear();
+    })
     if(!currentUser) {
+        window.removeEventListener('onbeforeunload',() => {
+            localStorage.clear();
+        })
         return <Navigate to="/login" />
     }
 

@@ -9,18 +9,41 @@ import LanguageIcon from "@mui/icons-material/Language";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Posts from "../../components/posts/Posts"
+import {
+  useMutation,
+  useQueryClient,
+  useQuery,
+} from '@tanstack/react-query'
+import { useLocation } from "react-router-dom";
+import { makeRequest } from "../../../axiosClient";
+import { useContext } from "react";
+import { AuthContext } from './../../../context/authContext';
 
 const Profile = () => {
+  const {currentUser} = useContext(AuthContext)
+
+  const userId =parseInt(useLocation().pathname.split('/')[2]);
+  console.log(userId);
+  const { isLoading, error, data } = useQuery({
+    queryKey: ['user'],
+    queryFn: () =>
+      makeRequest.get('/users/profile/'+ userId).then((res) => {
+        return res.data
+      })
+  })
+
+  console.log(data);
+
   return (
     <div className="profile">
       <div className="images">
         <img
-          src="https://images.pexels.com/photos/13440765/pexels-photo-13440765.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+          src={data && data.coverPic}
           alt=""
           className="cover"
         />
         <img
-          src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+          src={data && data.profilePic}
           alt=""
           className="profilePic"
         />
@@ -45,18 +68,18 @@ const Profile = () => {
             </a>
           </div>
           <div className="center">
-            <span>Jane Doe</span>
+            <span>{data && data.name}</span>
             <div className="info">
               <div className="item">
                 <PlaceIcon />
-                <span>USA</span>
+                <span>{data && data.city}</span>
               </div>
               <div className="item">
                 <LanguageIcon />
-                <span>lama.dev</span>
+                <span>{data && data.website}</span>
               </div>
             </div>
-            <button>follow</button>
+            {currentUser && userId === currentUser.id ?  <button >update</button> : <button >follow</button>}
           </div>
           <div className="right">
             <EmailOutlinedIcon />

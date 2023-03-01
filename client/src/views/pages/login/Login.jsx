@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../context/authContext";
 import "./login.scss";
 // import axiosClient from './../../../axiosClient';
@@ -19,6 +19,7 @@ const Login = () => {
     setInput((pre) => ({...pre, [e.target.name]: e.target.value}))
   }
   const { login, currentUser } = useContext(AuthContext);
+  if(currentUser) return <Navigate to={'/'}/>
 
   const handleSubmit = async (e) => {
     e.preventDefault();
